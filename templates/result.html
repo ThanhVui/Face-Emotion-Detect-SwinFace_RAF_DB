@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+    .custom-image {
+        max-width: 1200px !important;
+        height: auto;
+    }
+    @media (min-width: 768px) {
+        .custom-image {
+            max-width: 1500px !important;
+        }
+    }
+</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header Bar -->
+    <nav class="bg-blue-600 p-4 shadow-md">
+        <div class="container mx-auto flex justify-center space-x-4">
+            <a href="{{ url_for('upload_image') }}" class="text-white font-semibold hover:text-gray-200">Image Upload</a>
+            <a href="{{ url_for('upload_video') }}" class="text-white font-semibold hover:text-gray-200">Video Upload</a>
+            <a href="{{ url_for('camera_feed') }}" class="text-white font-semibold hover:text-gray-200">Camera Feed</a>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6 text-center">Emotion Detection Results</h1>
+        <div class="mb-6">
+            <img src="{{ url_for('static', filename='uploads/' + output_image) }}"
+                 alt="Processed Image" class="mx-auto rounded-lg shadow-lg max-w-3xl w-full h-auto md:max-w-4xl md:h-auto" />
+        </div>
+        {% if results %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for result in results %}
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold mb-4">{{ result.face_id }}</h2>
+                        <p class="text-lg mb-2"><strong>Dominant Emotion:</strong> {{ result.max_emotion }}</p>
+                        <h3 class="text-lg font-medium mb-2">Emotion Scores:</h3>
+                        <ul class="space-y-1">
+                            {% for emotion, score in result.emotion_scores.items() %}
+                                <li>{{ emotion }}: {{ score }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600">No faces detected or emotions processed.</p>
+        {% endif %}
+        <div class="mt-6 text-center">
+            <a href="{{ url_for('upload_image') }}"
+               class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                Upload Another Image
+            </a>
+        </div>
+    </div>
+</body>
+</html>

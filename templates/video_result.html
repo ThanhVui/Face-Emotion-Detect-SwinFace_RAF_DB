@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Emotion Detection Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header Bar -->
+    <nav class="bg-blue-600 p-4 shadow-md">
+        <div class="container mx-auto flex justify-center space-x-4">
+            <a href="{{ url_for('upload_image') }}" class="text-white font-semibold hover:text-gray-200">Image Upload</a>
+            <a href="{{ url_for('upload_video') }}" class="text-white font-semibold hover:text-gray-200">Video Upload</a>
+            <a href="{{ url_for('camera_feed') }}" class="text-white font-semibold hover:text-gray-200">Camera Feed</a>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6 text-center">Video Emotion Detection Results</h1>
+        <div class="mb-6">
+            <video controls class="mx-auto rounded-lg shadow-lg max-w-full h-auto">
+                <source src="{{ url_for('static', filename='uploads/' + output_video) }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        {% if results %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for frame_result in results %}
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold mb-4">Frame {{ frame_result.frame_id }}</h2>
+                        {% for face_result in frame_result.faces %}
+                            <div class="mb-4">
+                                <h3 class="text-lg font-semibold">{{ face_result.face_id }}</h3>
+                                <p class="text-lg mb-2"><strong>Dominant Emotion:</strong> {{ face_result.max_emotion }}</p>
+                                <h4 class="text-md font-medium mb-2">Emotion Scores:</h4>
+                                <ul class="space-y-1">
+                                    {% for emotion, score in face_result.emotion_scores.items() %}
+                                        <li>{{ emotion }}: {{ score }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600">No faces detected or emotions processed in the video.</p>
+        {% endif %}
+        <div class="mt-6 text-center">
+            <a href="{{ url_for('upload_video') }}"
+               class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                Upload Another Video
+            </a>
+        </div>
+    </div>
+</body>
+</html>
