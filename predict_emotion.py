@@ -1,10 +1,12 @@
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 from timm import create_model
-import os
+from PIL import Image
+import matplotlib.pyplot as plt
 
 # MLCA Module (same as in the notebook)
 class MLCA(nn.Module):
@@ -85,6 +87,7 @@ transform = transforms.Compose([
 
 # Load the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
 model = SwinFace(num_classes=7).to(device)
 model_path = "models/swinface_model_93.pth"  # Adjust path as needed
 if not os.path.exists(model_path):
@@ -136,7 +139,7 @@ def predict_emotion(img_path):
 # Example usage
 if __name__ == "__main__":
     # Replace with the path to your image
-    image_path = r"./static/uploads/6f8844b0-ac08-4c7a-b271-b68920a8f924.jpg"
+    image_path = r"D:\Study-AI\SwinFace\images\WIN_20250518_18_26_13_Pro.jpg"
     result = predict_emotion(image_path)
     if result['emotion']:
         print(f"Predicted Emotion: {result['emotion']}")
@@ -145,3 +148,12 @@ if __name__ == "__main__":
             print(f"{emotion}: {score}")
     else:
         print(f"Error: {result['error']}")
+        import matplotlib.pyplot as plt
+
+    # Load and display the image
+    img = Image.open(image_path).convert('RGB')
+    plt.figure(figsize=(5, 5))
+    plt.imshow(img)
+    plt.axis('off')
+    plt.title(f'Predicted Emotion: {result["emotion"]}')
+    plt.show()
